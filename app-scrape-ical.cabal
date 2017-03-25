@@ -21,7 +21,10 @@ library
   -- other-extensions:     
   exposed-modules:      App.Scrape.ICal
   -- other-modules:        
-  build-depends:        base
+  build-depends:        base,
+                        text,
+                        time,
+                        megaparsec
 
 -- executable app-scrape-ical
 --   default-language:     Haskell2010
