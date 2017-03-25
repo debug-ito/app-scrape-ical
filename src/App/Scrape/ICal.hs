@@ -4,9 +4,12 @@
 -- Maintainer: Toshio Ito <debug.ito@gmail.com>
 -- 
 module App.Scrape.ICal
-       () where
+       ( scrapeEventChecker
+       ) where
 
-import Control.Applicative (many, (<$>), (<*>), (<*))
+import Control.Applicative (many, (<$>), (<*>), (<*), (*>), (<|>), optional)
+import Control.Monad (void)
+import Data.Bifunctor (first)
 import Data.Text (Text, pack)
 import Data.Time (Day, fromGregorian)
 import qualified Text.Megaparsec as P
@@ -24,38 +27,65 @@ data Event =
           eventURI :: Maybe URIText
         } deriving (Show,Eq,Ord)
 
-scrapeEventChecker :: Text -> Either ErrorMsg Event
-scrapeEventChecker = undefined
+scrapeEventChecker :: String -> Text -> Either ErrorMsg Event
+scrapeEventChecker filename input = first show $ P.runParser parserEvent filename input
 
 parserEvent :: Parser Event
 parserEvent = do
   P.string "▼イベント概要" >> br >> P.space
-  dates <- parserDates
-  P.space >> br >> P.space
   name <- textTill (P.space >> br)
   P.space
+  dates <- parserDates
+  P.space >> br >> P.space
   place <- textTill (P.space >> br)
-  undefined
+  void $ textTill $ P.lookAhead (P.try endSummary <|> void parserLink)
+  muri <- optional parserLink
+  return $ Event { eventName = name,
+                   eventWhen = dates,
+                   eventWhere = Just place,
+                   eventURI = muri
+                 }
 
 textTill :: Parser e -> Parser Text
 textTill end = fmap pack $ P.manyTill P.anyChar end
 
 br :: Parser ()
 br = do
-  P.string "<"
+  void $P.string "<"
   P.space
-  P.string "br"
+  void $ P.string "br"
   P.space
-  P.string "/>"
+  void $ P.string "/>"
   return ()
 
-parserDates :: Parser Event
+endSummary :: Parser ()
+endSummary = void $ P.string "<a name=\"more\"></a>"
+
+parserDates :: Parser (Day, Day)
 parserDates = do
-  start <- fromGregorian
-           <$> (decimal <* P.string "年")
-           <*> (decimal <* P.string "月")
-           <*> (decimal <* P.string "日")
-  undefined -- todo. 終了日はない場合もある。あと年は省略されるかも。
+  start_y <- decimalWith "年"
+  start <- fromGregorian start_y
+           <$> decimalWith "月"
+           <*> decimalWith "日"
+  mend <- optional $ (P.string "-" *> parserEnd start_y)
+  return (start, maybe start id mend)
+  where
+    decimalWith postfix = decimal <* P.string postfix
+    parserEnd def_year = fromGregorian
+                         <$> (P.try (decimalWith "年") <|> pure def_year)
+                         <*> decimalWith "月"
+                         <*> decimalWith "日"
 
 decimal :: Num a => Parser a
 decimal = fmap fromInteger P.decimal
+
+parserLink :: Parser URIText
+parserLink = do
+  void $ P.string "<"
+  P.space
+  void $ P.string "a"
+  void $ P.manyTill (P.noneOf ">") (P.string "href=\"")
+  uri <- textTill $ P.char '"'
+  void $ textTill $ P.char '>'
+  void $ P.string "公式サイト</a>"
+  return uri
