@@ -31,6 +31,9 @@ spec = do
                                           eventWhere = Just "新宿ゴールデン街",
                                           eventURI = Just "http://golden-gai.tokyo/sakura2017/"
                                         }
+    it "should return ParseMissing if there is no event summary in the page" $ do
+      ret <- loadAndParse' "pino_maccha.html"
+      ret `shouldBe` ParseMissing
 
 day :: Integer -> Int -> Int -> Day
 day = fromGregorian
