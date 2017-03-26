@@ -27,7 +27,10 @@ library
                         text,
                         time,
                         megaparsec,
-                        iCalendar
+                        iCalendar,
+                        data-default-class,
+                        uuid,
+                        network-uri
 
 -- executable app-scrape-ical
 --   default-language:     Haskell2010
