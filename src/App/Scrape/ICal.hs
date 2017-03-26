@@ -53,7 +53,7 @@ parserEvent = do
   dates <- parserDates
   P.space >> br >> P.space
   place <- textTill (P.space >> br)
-  muri <- skipTill (P.try (endSummary >> pure Nothing) <|> (Just <$> parserLink))
+  muri <- skipTill (P.try (endSummary >> pure Nothing) <|> (Just <$> P.try parserLink))
   return $ Event { eventName = name,
                    eventWhen = dates,
                    eventWhere = Just place,
