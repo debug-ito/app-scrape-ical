@@ -30,7 +30,8 @@ library
                         iCalendar,
                         data-default-class,
                         uuid,
-                        network-uri
+                        network-uri,
+                        containers
 
 -- executable app-scrape-ical
 --   default-language:     Haskell2010
