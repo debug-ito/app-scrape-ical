@@ -20,7 +20,8 @@ library
   ghc-options:          -Wall -fno-warn-unused-imports
   -- default-extensions:   
   -- other-extensions:     
-  exposed-modules:      App.Scrape.ICal.Parse
+  exposed-modules:      App.Scrape.ICal.Parse,
+                        App.Scrape.ICal.Convert
   -- other-modules:        
   build-depends:        base,
                         text,
