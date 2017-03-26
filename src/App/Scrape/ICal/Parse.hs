@@ -1,9 +1,9 @@
 -- |
--- Module: App.Scrape.ICal
--- Description:
+-- Module: App.Scrape.ICal.Parse
+-- Description: Parser of web pages etc. for Event data.
 -- Maintainer: Toshio Ito <debug.ito@gmail.com>
 -- 
-module App.Scrape.ICal
+module App.Scrape.ICal.Parse
        ( scrapeEventChecker,
          Event(..),
          URIText,
@@ -41,6 +41,7 @@ toParseResult (Left err) = ParseFailure $ show err
 toParseResult (Right Nothing) = ParseMissing
 toParseResult (Right (Just a)) = ParseSuccess a
 
+-- | Scraper for http://event-checker.blog.so-net.ne.jp/
 scrapeEventChecker :: String -> Text -> ParseResult Event
 scrapeEventChecker filename input = toParseResult $ P.runParser p filename input where
   p = skipTill ((P.eof >> pure Nothing) <|> (Just <$> parserEvent))

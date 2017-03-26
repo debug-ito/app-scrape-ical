@@ -20,7 +20,7 @@ library
   ghc-options:          -Wall -fno-warn-unused-imports
   -- default-extensions:   
   -- other-extensions:     
-  exposed-modules:      App.Scrape.ICal
+  exposed-modules:      App.Scrape.ICal.Parse
   -- other-modules:        
   build-depends:        base,
                         text,
@@ -45,7 +45,7 @@ test-suite spec
   main-is:              Spec.hs
   default-extensions:   OverloadedStrings
   -- other-extensions:     
-  other-modules:        App.Scrape.ICalSpec
+  other-modules:        App.Scrape.ICal.ParseSpec
   build-depends:        base, app-scrape-ical, text, time,
                         hspec
 

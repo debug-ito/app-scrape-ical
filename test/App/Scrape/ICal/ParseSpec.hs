@@ -1,9 +1,9 @@
-module App.Scrape.ICalSpec (main, spec) where
+module App.Scrape.ICal.ParseSpec (main, spec) where
 
 import Data.Text (Text)
 import qualified Data.Text.IO as TIO
 import Data.Time (Day, fromGregorian)
-import App.Scrape.ICal
+import App.Scrape.ICal.Parse
   ( scrapeEventChecker,
     Event(..), ParseResult(..)
   )
