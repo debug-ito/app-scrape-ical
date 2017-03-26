@@ -5,7 +5,9 @@
 --
 -- 
 module App.Scrape.ICal.Convert
-       ( toVEvent
+       ( toVEvent,
+         makeCalendar,
+         addVEvent
        ) where
 
 import Control.Applicative ((<$>), (<*>))
@@ -22,6 +24,9 @@ import App.Scrape.ICal.Parse (Event(..))
 import Network.URI (parseURI)
 import Text.ICalendar (VEvent(..), Summary(..), Location(..), VCalendar(..))
 import qualified Text.ICalendar as ICal
+
+makeCalendar :: [VEvent] -> VCalendar
+makeCalendar = foldr addVEvent def
 
 addVEvent :: VEvent -> VCalendar -> VCalendar
 addVEvent eve cal = cal { vcEvents = M.insert key eve $ vcEvents cal } where
