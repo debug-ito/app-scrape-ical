@@ -21,7 +21,8 @@ library
   -- default-extensions:   
   -- other-extensions:     
   exposed-modules:      App.Scrape.ICal.Parse,
-                        App.Scrape.ICal.Convert
+                        App.Scrape.ICal.Convert,
+                        App.Scrape.ICal.Exec
   -- other-modules:        
   build-depends:        base,
                         text,
@@ -31,17 +32,19 @@ library
                         data-default-class,
                         uuid,
                         network-uri,
-                        containers
+                        containers,
+                        bytestring,
+                        http-client
 
--- executable app-scrape-ical
---   default-language:     Haskell2010
---   hs-source-dirs:       app
---   main-is:              Main.hs
---   ghc-options:          -Wall -fno-warn-unused-imports
---   -- other-modules:        
---   -- default-extensions:   
---   -- other-extensions:     
---   build-depends:        base
+executable app-scrape-ical
+  default-language:     Haskell2010
+  hs-source-dirs:       app
+  main-is:              Main.hs
+  ghc-options:          -Wall -fno-warn-unused-imports
+  -- other-modules:        
+  -- default-extensions:   
+  -- other-extensions:     
+  build-depends:        base, app-scrape-ical
 
 test-suite spec
   type:                 exitcode-stdio-1.0
