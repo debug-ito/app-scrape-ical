@@ -43,12 +43,11 @@ test-suite spec
   hs-source-dirs:       test
   ghc-options:          -Wall -fno-warn-unused-imports "-with-rtsopts=-M512m"
   main-is:              Spec.hs
-  -- default-extensions:   
+  default-extensions:   OverloadedStrings
   -- other-extensions:     
   other-modules:        App.Scrape.ICalSpec
-  build-depends:        base, app-scrape-ical,
-                        hspec,
-                        text
+  build-depends:        base, app-scrape-ical, text, time,
+                        hspec
 
 source-repository head
   type:                 git
