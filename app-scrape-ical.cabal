@@ -9,7 +9,8 @@ license-file:           LICENSE
 -- category:               
 cabal-version:          >= 1.10
 build-type:             Simple
-extra-source-files:     README.md, ChangeLog.md
+extra-source-files:     README.md, ChangeLog.md,
+                        test/data/event-checker/*.html
 -- homepage:               
 -- bug-reports:            
 
@@ -46,7 +47,8 @@ test-suite spec
   -- other-extensions:     
   other-modules:        App.Scrape.ICalSpec
   build-depends:        base, app-scrape-ical,
-                        hspec
+                        hspec,
+                        text
 
 source-repository head
   type:                 git
