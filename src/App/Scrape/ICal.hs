@@ -4,7 +4,11 @@
 -- Maintainer: Toshio Ito <debug.ito@gmail.com>
 -- 
 module App.Scrape.ICal
-       ( scrapeEventChecker
+       ( scrapeEventChecker,
+         Event(..),
+         URIText,
+         ErrorMsg,
+         ParseResult(..)
        ) where
 
 import Control.Applicative (many, (<$>), (<*>), (<*), (*>), (<|>), optional)
@@ -27,8 +31,19 @@ data Event =
           eventURI :: Maybe URIText
         } deriving (Show,Eq,Ord)
 
-scrapeEventChecker :: String -> Text -> Either ErrorMsg Event
-scrapeEventChecker filename input = first show $ P.runParser parserEvent filename input
+data ParseResult a = ParseSuccess a
+                   | ParseFailure ErrorMsg
+                   | ParseMissing
+                   deriving (Show,Eq,Ord)
+
+toParseResult :: Show e => Either e (Maybe a) -> ParseResult a
+toParseResult (Left err) = ParseFailure $ show err
+toParseResult (Right Nothing) = ParseMissing
+toParseResult (Right (Just a)) = ParseSuccess a
+
+scrapeEventChecker :: String -> Text -> ParseResult Event
+scrapeEventChecker filename input = toParseResult $ P.runParser p filename input where
+  p = skipTill ((P.eof >> pure Nothing) <|> (Just <$> parserEvent))
 
 parserEvent :: Parser Event
 parserEvent = do
@@ -38,8 +53,7 @@ parserEvent = do
   dates <- parserDates
   P.space >> br >> P.space
   place <- textTill (P.space >> br)
-  void $ textTill $ P.lookAhead (P.try endSummary <|> void parserLink)
-  muri <- optional parserLink
+  muri <- skipTill (P.try (endSummary >> pure Nothing) <|> (Just <$> parserLink))
   return $ Event { eventName = name,
                    eventWhen = dates,
                    eventWhere = Just place,
@@ -48,6 +62,11 @@ parserEvent = do
 
 textTill :: Parser e -> Parser Text
 textTill end = fmap pack $ P.manyTill P.anyChar end
+
+skipTill :: Parser e -> Parser e
+skipTill end = do
+  void $ P.manyTill P.anyChar $ P.lookAhead end
+  end
 
 br :: Parser ()
 br = do
