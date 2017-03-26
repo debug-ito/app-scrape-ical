@@ -26,7 +26,8 @@ library
   build-depends:        base,
                         text,
                         time,
-                        megaparsec
+                        megaparsec,
+                        iCalendar
 
 -- executable app-scrape-ical
 --   default-language:     Haskell2010
