@@ -48,11 +48,11 @@ scrapeEventChecker filename input = toParseResult $ P.runParser p filename input
 parserEvent :: Parser Event
 parserEvent = do
   P.string "▼イベント概要" >> br >> P.space
-  name <- textTill (P.space >> br)
+  name <- textTill br
   P.space
   dates <- parserDates
   P.space >> br >> P.space
-  place <- textTill (P.space >> br)
+  place <- textTill br
   muri <- skipTill (P.try (endSummary >> pure Nothing) <|> (Just <$> P.try parserLink))
   return $ Event { eventName = name,
                    eventWhen = dates,
