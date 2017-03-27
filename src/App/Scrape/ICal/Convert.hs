@@ -20,7 +20,6 @@ import Data.Text (Text, unpack, pack)
 import Data.Text.Lazy (fromStrict)
 import Data.Time (UTCTime, getCurrentTime, showGregorian)
 import App.Scrape.ICal.Parse (Event(..))
-import Network.BSD (getHostName)
 import Network.URI (parseURI)
 import Text.ICalendar (VEvent(..), Summary(..), Location(..), VCalendar(..))
 import qualified Text.ICalendar as ICal
@@ -34,10 +33,8 @@ addVEvent eve cal = cal { vcEvents = M.insert key eve $ vcEvents cal } where
   recurToEither (ICal.RecurrenceIdDate d _ _) = Left d
   recurToEither (ICal.RecurrenceIdDateTime d _ _) = Right d
 
-makeUID :: String -> Event -> IO Text
-makeUID source_url event = do
-  host <- getHostName
-  return $ pack (source_url ++ "#" ++ start ++ "-" ++ end ++ "@" ++ host)
+makeUID :: String -> Event -> Text
+makeUID source_url event = pack (source_url ++ "#" ++ start ++ "_" ++ end)
   where
     start = showGregorian $ fst $ eventWhen event
     end = showGregorian $ snd $ eventWhen event

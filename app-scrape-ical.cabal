@@ -31,7 +31,6 @@ library
                         iCalendar,
                         data-default-class,
                         network-uri,
-                        network,
                         containers,
                         bytestring,
                         http-client

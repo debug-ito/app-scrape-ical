@@ -51,6 +51,4 @@ aggregateToCalendar :: [(URLString, ParseResult Event)] -> IO VCalendar
 aggregateToCalendar rets = fmap makeCalendar $ (mapM toVEvent' . concat) =<< mapM filterResult rets where
   filterResult (url, ParseSuccess eve) = return [(url, eve)]
   filterResult (url, p) = logWarn ("URL = " ++ url ++ " : " ++ show p) >> return []
-  toVEvent' (url, event) = do
-    uid <- makeUID url event
-    toVEvent uid event
+  toVEvent' (url, event) = toVEvent (makeUID url event) event
