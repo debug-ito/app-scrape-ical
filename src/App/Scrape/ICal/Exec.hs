@@ -8,7 +8,7 @@ module App.Scrape.ICal.Exec
        ( main
        ) where
 
-import App.Scrape.ICal.Convert (toVEvent, makeCalendar)
+import App.Scrape.ICal.Convert (toVEvent, makeCalendar, makeUID)
 import App.Scrape.ICal.Parse
   ( ParseResult(..), Event(..),
     scrapeEventChecker
@@ -16,8 +16,6 @@ import App.Scrape.ICal.Parse
 import qualified Data.ByteString.Lazy as BSL
 import Data.Default.Class (Default(def))
 import Data.Text.Encoding (decodeUtf8)
-import Data.Time.Clock.POSIX (getPOSIXTime)
-import Network.BSD (getHostName)
 import Network.HTTP.Client
   ( Manager,
     httpLbs,
@@ -54,6 +52,5 @@ aggregateToCalendar rets = fmap makeCalendar $ (mapM toVEvent' . concat) =<< map
   filterResult (url, ParseSuccess eve) = return [(url, eve)]
   filterResult (url, p) = logWarn ("URL = " ++ url ++ " : " ++ show p) >> return []
   toVEvent' (url, event) = do
-    uid <- makeUID url
+    uid <- makeUID url event
     toVEvent uid event
-  makeUID url = fmap (\name -> url ++ "@" ++ name) $ getHostName
