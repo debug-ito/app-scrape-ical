@@ -15,11 +15,9 @@ import Control.Monad (join)
 import Data.Default.Class (Default(def))
 import qualified Data.Map.Lazy as M
 import Data.Monoid (mempty)
-import Data.Text (Text, unpack)
+import Data.Text (Text, unpack, pack)
 import Data.Text.Lazy (fromStrict)
 import Data.Time (UTCTime, getCurrentTime)
-import qualified Data.UUID as UUID
-import qualified Data.UUID.V4 as UUID (nextRandom)
 import App.Scrape.ICal.Parse (Event(..))
 import Network.URI (parseURI)
 import Text.ICalendar (VEvent(..), Summary(..), Location(..), VCalendar(..))
@@ -34,14 +32,10 @@ addVEvent eve cal = cal { vcEvents = M.insert key eve $ vcEvents cal } where
   recurToEither (ICal.RecurrenceIdDate d _ _) = Left d
   recurToEither (ICal.RecurrenceIdDateTime d _ _) = Right d
 
--- | Create 'VEvent' from 'Event'. The UID of 'VEvent' is
--- auto-generated. The DTSTAMP of 'VEvent' is set to the current
--- system time.
-toVEvent :: Event -> IO VEvent
-toVEvent event = makeVEvent <$> generateUID <*> getCurrentTime <*> pure event
-
-generateUID :: IO Text
-generateUID = fmap UUID.toText $ UUID.nextRandom
+-- | Create 'VEvent' from 'Event'. The DTSTAMP of 'VEvent' is set to
+-- the current system time.
+toVEvent :: String -> Event -> IO VEvent
+toVEvent uid event = makeVEvent (pack uid) <$> getCurrentTime <*> pure event
 
 makeVEvent :: Text -> UTCTime -> Event -> VEvent
 makeVEvent uid dtstamp event =

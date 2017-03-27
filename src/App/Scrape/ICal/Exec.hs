@@ -16,6 +16,8 @@ import App.Scrape.ICal.Parse
 import qualified Data.ByteString.Lazy as BSL
 import Data.Default.Class (Default(def))
 import Data.Text.Encoding (decodeUtf8)
+import Data.Time.Clock.POSIX (getPOSIXTime)
+import Network.BSD (getHostName)
 import Network.HTTP.Client
   ( Manager,
     httpLbs,
@@ -48,6 +50,10 @@ logWarn :: String -> IO ()
 logWarn msg = hPutStrLn stderr ("[warn] " ++ msg)
 
 aggregateToCalendar :: [(URLString, ParseResult Event)] -> IO VCalendar
-aggregateToCalendar rets = fmap makeCalendar $ (mapM toVEvent . concat) =<< mapM filterResult rets where
-  filterResult (_, ParseSuccess eve) = return [eve]
+aggregateToCalendar rets = fmap makeCalendar $ (mapM toVEvent' . concat) =<< mapM filterResult rets where
+  filterResult (url, ParseSuccess eve) = return [(url, eve)]
   filterResult (url, p) = logWarn ("URL = " ++ url ++ " : " ++ show p) >> return []
+  toVEvent' (url, event) = do
+    uid <- makeUID url
+    toVEvent uid event
+  makeUID url = fmap (\name -> url ++ "@" ++ name) $ getHostName

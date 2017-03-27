@@ -30,8 +30,8 @@ library
                         megaparsec,
                         iCalendar,
                         data-default-class,
-                        uuid,
                         network-uri,
+                        network,
                         containers,
                         bytestring,
                         http-client
