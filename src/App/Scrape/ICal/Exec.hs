@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings #-}
 -- |
 -- Module: App.Scrape.ICal.Exec
 -- Description: executable entrypoint.
@@ -15,6 +16,9 @@ import App.Scrape.ICal.Parse
   )
 import qualified Data.ByteString.Lazy as BSL
 import Data.Default.Class (Default(def))
+import Data.Monoid ((<>))
+import Data.Text (pack)
+import qualified Data.Text.Lazy as TL
 import Data.Text.Encoding (decodeUtf8)
 import Network.HTTP.Client
   ( Manager,
@@ -25,7 +29,8 @@ import Network.HTTP.Client
   )
 import System.IO (hPutStrLn, stderr)
 import System.Environment (getArgs)
-import Text.ICalendar (VCalendar, printICalendar)
+import Text.ICalendar (VCalendar, printICalendar, VEvent(..))
+import qualified Text.ICalendar as ICal
 
 main :: IO ()
 main = scrapeURLs =<< getArgs
@@ -51,4 +56,8 @@ aggregateToCalendar :: [(URLString, ParseResult Event)] -> IO VCalendar
 aggregateToCalendar rets = fmap makeCalendar $ (mapM toVEvent' . concat) =<< mapM filterResult rets where
   filterResult (url, ParseSuccess eve) = return [(url, eve)]
   filterResult (url, p) = logWarn ("URL = " ++ url ++ " : " ++ show p) >> return []
-  toVEvent' (url, event) = toVEvent (makeUID url event) event
+  toVEvent' (url, event) = fmap (setDescription (pack url) event) $ toVEvent (makeUID url event) event
+  setDescription url event vevent =
+    vevent { veDescription = Just $ ICal.Description (makeDesc url event) Nothing Nothing def
+           }
+  makeDesc scrape_url event = TL.fromStrict $ scrape_url <> (maybe "" (\url -> "\n" <> url) $ eventURI event)

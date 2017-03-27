@@ -19,7 +19,7 @@ library
   hs-source-dirs:       src
   ghc-options:          -Wall -fno-warn-unused-imports
   -- default-extensions:   
-  -- other-extensions:     
+  other-extensions:     OverloadedStrings
   exposed-modules:      App.Scrape.ICal.Parse,
                         App.Scrape.ICal.Convert,
                         App.Scrape.ICal.Exec
