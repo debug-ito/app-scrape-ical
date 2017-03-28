@@ -4,6 +4,13 @@
 
 An application to scrape Web pages etc. to create ICal VEvent data.
 
+    $ app-scrape-ical http://event-checker.blog.so-net.ne.jp/kanda-jinbocho-furuhon201503 \
+                      http://event-checker.blog.so-net.ne.jp/keshigomu-hanko-ten \
+                      > events.ical
+
+## Supported Web sites to scrape
+
+- http://event-checker.blog.so-net.ne.jp/
 
 ## Author
 
