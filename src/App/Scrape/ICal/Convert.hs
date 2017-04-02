@@ -105,4 +105,4 @@ getDTEnd ev = if start == end
               else Just $ ICal.DTEndDate (ICal.Date end) def
   where
     start = fst $ eventWhen $ ev
-    end = snd $ eventWhen $ ev
+    end = succ $ snd $ eventWhen $ ev

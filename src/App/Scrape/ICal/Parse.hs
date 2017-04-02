@@ -26,7 +26,7 @@ type URIText = Text
 
 data Event =
   Event { eventName :: Text,
-          eventWhen :: (Day, Day),
+          eventWhen :: (Day, Day), -- ^ (inclusive start day, inclusive end day)
           eventWhere :: Maybe Text,
           eventURI :: Maybe URIText
         } deriving (Show,Eq,Ord)
