@@ -25,8 +25,9 @@ import Network.HTTP.Client
     httpLbs,
     parseUrlThrow,
     responseBody,
-    newManager, defaultManagerSettings
+    newManager
   )
+import Network.HTTP.Client.TLS (tlsManagerSettings)
 import System.IO (hPutStrLn, stderr)
 import System.Environment (getArgs)
 import Text.ICalendar (VCalendar, printICalendar, VEvent(..))
@@ -40,7 +41,7 @@ type URLString = String
 
 scrapeURLs :: [URLString] -> IO ()
 scrapeURLs urls = do
-  man <- newManager defaultManagerSettings
+  man <- newManager tlsManagerSettings
   (BSL.putStr . printICalendar def) =<< (aggregateToCalendar . zip urls) =<< mapM (fetchAndScrape man) urls
 
 fetchAndScrape :: Manager -> URLString -> IO (ParseResult Event)

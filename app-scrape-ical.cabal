@@ -1,5 +1,5 @@
 name:                   app-scrape-ical
-version:                0.1.0.1
+version:                0.1.0.2
 author:                 Toshio Ito <debug.ito@gmail.com>
 maintainer:             Toshio Ito <debug.ito@gmail.com>
 license:                BSD3
@@ -33,7 +33,8 @@ library
                         network-uri,
                         containers,
                         bytestring,
-                        http-client
+                        http-client,
+                        http-client-tls
 
 executable app-scrape-ical
   default-language:     Haskell2010

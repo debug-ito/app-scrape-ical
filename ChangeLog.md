@@ -1,5 +1,10 @@
 # Revision history for app-scrape-ical
 
+## 0.1.0.2  -- 2018-08-18
+
+* Support HTTPS.
+
+
 ## 0.1.0.1  -- 2017-04-02
 
 * Fix converting end date. iCal's EndDate field is exclusive.
