@@ -18,22 +18,29 @@ spec = do
   describe "scrapeEventChecker" $ do
     let loadAndParse' = loadAndParse scrapeEventChecker "test/data/event-checker"
     it "should scrape date range" $ do
-      ret <- loadAndParse' "american_fes_yokohama.html"
-      ret `shouldBe` ParseSuccess Event { eventName = "第10回アフリカンフェスティバルよこはま2017",
-                                          eventWhen = (day 2017 3 24, day 2017 3 26),
-                                          eventWhere = Just "横浜赤レンガ倉庫１号館",
-                                          eventURI = Just "http://africanfestyokohama.com/"
+      ret <- loadAndParse' "hosokawa_delta_header.html"
+      ret `shouldBe` ParseSuccess Event { eventName = "秋の紅葉ライトアップ ～ひごあかり～",
+                                          eventWhen = (day 2019 11 23, day 2019 12 1),
+                                          eventWhere = Just "肥後細川庭園（旧：新江戸川公園）",
+                                          eventURI = Just "https://www.higo-hosokawa.jp/"
                                         }
     it "should scrape single date" $ do
-      ret <- loadAndParse' "sakura_matsuri.html"
-      ret `shouldBe` ParseSuccess Event { eventName = "新宿花園ゴールデン街 桜まつり2017",
-                                          eventWhen = (day 2017 4 16, day 2017 4 16),
-                                          eventWhere = Just "新宿ゴールデン街",
-                                          eventURI = Just "http://golden-gai.tokyo/sakura2017/"
+      ret <- loadAndParse' "ippudo_single_day.html"
+      ret `shouldBe` ParseSuccess Event { eventName = "一風堂「勤労感謝玉(替玉一玉)」プレゼントキャンペーン",
+                                          eventWhen = (day 2019 11 23, day 2019 11 23),
+                                          eventWhere = Just "一風堂 国内全店舗",
+                                          eventURI = Just "https://www.ippudo.com/"
                                         }
     it "should return ParseMissing if there is no event summary in the page" $ do
-      ret <- loadAndParse' "pino_maccha.html"
+      ret <- loadAndParse' "kfc_lunch.html"
       ret `shouldBe` ParseMissing
+    it "should scrape an event over year boundary" $ do
+      ret <- loadAndParse' "enoshima_2019_2020.html"
+      ret `shouldBe` ParseSuccess Event { eventName = "湘南の宝石 ～江の島を彩る光と色の祭典～",
+                                          eventWhen = (day 2019 11 23, day 2020 2 16),
+                                          eventWhere = Just "江の島サムエル・コッキング苑、他",
+                                          eventURI = Just "https://enoshima-seacandle.com/event/shonannohoseki2018-2019/"
+                                        }
 
 day :: Integer -> Int -> Int -> Day
 day = fromGregorian
