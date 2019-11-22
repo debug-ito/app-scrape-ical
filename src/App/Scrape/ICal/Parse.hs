@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings #-}
 -- |
 -- Module: App.Scrape.ICal.Parse
 -- Description: Parser of web pages etc. for Event data.
@@ -16,9 +17,12 @@ import Control.Monad (void)
 import Data.Bifunctor (first)
 import Data.Text (Text, pack)
 import Data.Time (Day, fromGregorian)
+import Data.Void (Void)
 import qualified Text.Megaparsec as P
-import qualified Text.Megaparsec.Lexer as P (decimal)
-import Text.Megaparsec.Text (Parser)
+import qualified Text.Megaparsec.Char as P (space, string, anyChar, noneOf, char)
+import qualified Text.Megaparsec.Char.Lexer as P (decimal)
+
+type Parser = P.Parsec Void Text
 
 type ErrorMsg = String
 
@@ -104,7 +108,7 @@ parserLink = do
   void $ P.string "<"
   P.space
   void $ P.string "a"
-  void $ P.manyTill (P.noneOf ">") (P.string "href=\"")
+  void $ P.manyTill (P.noneOf (">" :: String)) (P.string ("href=\"" :: Text))
   uri <- textTill $ P.char '"'
   void $ textTill $ P.char '>'
   void $ P.string "公式サイト</a>"

@@ -24,10 +24,10 @@ library
                         App.Scrape.ICal.Convert,
                         App.Scrape.ICal.Exec
   -- other-modules:        
-  build-depends:        base,
+  build-depends:        base <5.0,
                         text,
                         time,
-                        megaparsec,
+                        megaparsec >=6.5.0 && <6.6,
                         iCalendar,
                         data-default-class,
                         network-uri,
