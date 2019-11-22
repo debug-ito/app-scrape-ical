@@ -45,14 +45,14 @@ toParseResult (Left err) = ParseFailure $ show err
 toParseResult (Right Nothing) = ParseMissing
 toParseResult (Right (Just a)) = ParseSuccess a
 
--- | Scraper for http://event-checker.blog.so-net.ne.jp/
+-- | Scraper for https://event-checker.info/
 scrapeEventChecker :: String -> Text -> ParseResult Event
 scrapeEventChecker filename input = toParseResult $ P.runParser p filename input where
   p = skipTill ((P.eof >> pure Nothing) <|> (Just <$> parserEvent))
 
 parserEvent :: Parser Event
 parserEvent = do
-  P.string "▼イベント概要" >> br >> P.space
+  parserHeader >> br >> P.space
   name <- textTill br
   P.space
   dates <- parserDates
@@ -64,6 +64,9 @@ parserEvent = do
                    eventWhere = Just place,
                    eventURI = muri
                  }
+
+parserHeader :: Parser Text
+parserHeader = P.string "▼イベント概要" <|> P.string "【イベント詳細】"
 
 textTill :: Parser e -> Parser Text
 textTill end = fmap pack $ P.manyTill P.anyChar end
@@ -79,7 +82,7 @@ br = do
   P.space
   void $ P.string "br"
   P.space
-  void $ P.string "/>"
+  void $ (P.string "/>" <|> P.string ">")
   return ()
 
 endSummary :: Parser ()
