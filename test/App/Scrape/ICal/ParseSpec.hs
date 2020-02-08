@@ -41,6 +41,13 @@ spec = do
                                           eventWhere = Just "江の島サムエル・コッキング苑、他",
                                           eventURI = Just "https://enoshima-seacandle.com/event/shonannohoseki2018-2019/"
                                         }
+    it "should parse the dates with spaces around" $ do
+      ret <- loadAndParse' "kameido.html"
+      ret `shouldBe` ParseSuccess Event { eventName = "第23回 亀戸天神 梅まつり",
+                                          eventWhen = (day 2020 2 8, day 2020 3 8),
+                                          eventWhere = Just "亀戸天神社",
+                                          eventURI = Just "http://www.kameidotenjin.or.jp/"
+                                        }
 
 day :: Integer -> Int -> Int -> Day
 day = fromGregorian

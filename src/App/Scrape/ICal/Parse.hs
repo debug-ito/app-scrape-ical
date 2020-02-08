@@ -94,7 +94,7 @@ parserDates = do
   start <- fromGregorian start_y
            <$> decimalWith "月"
            <*> decimalWith "日"
-  mend <- optional $ (P.string "-" *> parserEnd start_y)
+  mend <- optional $ (P.space *> P.string "-" *> P.space *> parserEnd start_y)
   return (start, maybe start id mend)
   where
     decimalWith postfix = decimal <* P.string postfix
